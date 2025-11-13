@@ -6,44 +6,99 @@ aws:
 
 lightsail:
   instance_name: sample-python-app
-  static_ip: 
+  static_ip: 23.20.95.172
 
 application:
   name: sample-python-app-lightsail-deploy
   type: web
   version: 1.0.0
   package_files:
-    - app.js
-    - package.json
-    - package-lock.json
+    - app.py
+    - requirements.txt
   package_fallback: true
 
 dependencies:
-  nodejs:
-    enabled: false
-    version: "18"
+  # Web Servers
+  apache:
+    enabled: {str(config.get('use_apache', False)).lower()}
+    version: "latest"
+    config:
+      document_root: "/var/www/html"
+      enable_ssl: false
+      enable_rewrite: true
   
   nginx:
-    enabled: true
+    enabled: {str(config.get('use_nginx', True)).lower()}
+    version: "latest"
+    config:
+      document_root: "/var/www/html"
+      enable_ssl: false
+  
+  # Databases
+  mysql:
+    enabled: {str(config.get('use_mysql', False)).lower()}
     version: "latest"
   
-  mysql:
-    enabled: true
-  
-  php:
-    enabled: false
-  
   postgresql:
-    enabled: false
+    enabled: {str(config.get('use_postgresql', False)).lower()}
+    version: "latest"
   
-  redis:
-    enabled: false
+  # Programming Languages
+  php:
+    enabled: {str(config.get('use_php', False)).lower()}
+    version: "8.3"
+    config:
+      extensions:
+        - "pgsql"
+        - "curl"
+        - "mbstring"
+        - "xml"
+        - "zip"
+      enable_composer: true
   
   python:
-    enabled: false
+    enabled: {str(config.get('use_python', False)).lower()}
+    version: "3.9"
+    config:
+      pip_packages: []
+      virtual_env: true
+  
+  nodejs:
+    enabled: {str(config.get('use_nodejs', True)).lower()}
+    version: "18"
+    config:
+      npm_packages: []
+      package_manager: "npm"
+  
+  # Additional Services
+  redis:
+    enabled: {str(config.get('use_redis', False)).lower()}
+    version: "latest"
+  
+  memcached:
+    enabled: {str(config.get('use_memcached', False)).lower()}
+    version: "latest"
   
   docker:
-    enabled: false
+    enabled: {str(config.get('use_docker', False)).lower()}
+    version: "latest"
+    config:
+      enable_compose: true
+  
+  # System Tools
+  git:
+    enabled: {str(config.get('use_git', True)).lower()}
+    config:
+      install_lfs: false
+  
+  firewall:
+    enabled: {str(config.get('use_firewall', True)).lower()}
+    config:
+      allowed_ports:
+        - "22"
+        - "80"
+        - "443"
+      deny_all_other: true
 
 github_actions:
   triggers:
