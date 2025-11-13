@@ -15,6 +15,7 @@ application:
   package_files:
     - app.py
     - requirements.txt
+    - templates/
   package_fallback: true
 
 dependencies:
