@@ -1,0 +1,54 @@
+# Deployment Configuration
+# This file configures the reusable deployment workflow
+
+aws:
+  region: us-east-1
+
+lightsail:
+  instance_name: sample-python-app
+  static_ip: 
+
+application:
+  name: sample-python-app-lightsail-deploy
+  type: web
+  version: 1.0.0
+  package_files:
+    - app.js
+    - package.json
+    - package-lock.json
+  package_fallback: true
+
+dependencies:
+  nodejs:
+    enabled: false
+    version: "18"
+  
+  nginx:
+    enabled: true
+    version: "latest"
+  
+  mysql:
+    enabled: true
+  
+  php:
+    enabled: false
+  
+  postgresql:
+    enabled: false
+  
+  redis:
+    enabled: false
+  
+  python:
+    enabled: false
+  
+  docker:
+    enabled: false
+
+github_actions:
+  triggers:
+    push_branches:
+      - main
+  jobs:
+    test:
+      enabled: true
